@@ -76,6 +76,11 @@ Cari kalimatnya di bagian **Alasan percaya**, **Papan catatan**, **Kontak**, dan
 
 Ganti `https://yubuild.id/` di `index.html` (tag `canonical`, Open Graph, dan blok
 `application/ld+json`) serta di `robots.txt` dan `sitemap.xml` dengan domain asli Anda.
+Cara cepat memeriksa apakah masih ada yang tertinggal:
+
+```bash
+grep -rn "yubuild.id" index.html robots.txt sitemap.xml
+```
 
 ---
 
@@ -105,6 +110,8 @@ Setiap berkas punya dua versi:
 
 ```
 index.html                 Seluruh isi halaman
+404.html                   Halaman "tidak ditemukan" untuk hosting statis
+site.webmanifest           Nama, warna, dan ikon saat halaman dipasang di layar utama
 assets/css/style.css       Semua gaya — bernomor per bagian (1–10)
 assets/js/main.js          Semua perilaku — bernomor per bagian (0–7)
 assets/img/karya/          54 tangkapan layar (WebP) dari 10 proyek
@@ -159,7 +166,8 @@ perangkatnya (`prefers-reduced-motion`).
 Isinya statis semua, jadi bisa di-hosting di mana saja tanpa konfigurasi:
 
 - **GitHub Pages** — *Settings → Pages → Deploy from a branch*, pilih branch ini,
-  folder `/ (root)`. Berkas `.nojekyll` sudah disertakan.
+  folder `/ (root)`. Berkas `.nojekyll` sudah disertakan, dan `404.html` otomatis
+  dipakai untuk alamat yang salah.
 - **Netlify / Vercel / Cloudflare Pages** — hubungkan repo ini, kosongkan
   *build command* dan *output directory*.
 - **Hosting biasa (cPanel)** — unggah seluruh isi folder ke `public_html`.
@@ -193,8 +201,13 @@ Salin satu blok `<article class="work-item">` di `index.html`, lalu ubah:
 ## Aksesibilitas & kinerja
 
 - Seluruh gambar punya `alt`; yang dekoratif ditandai `aria-hidden`
+- Tombol **"Lewati ke konten utama"** muncul di tekanan `Tab` pertama
 - Popup detail bisa ditutup dengan `Esc` dan fokus papan ketik terkurung di dalamnya
 - Menu, filter, dan akordeon memakai `aria-expanded` / `aria-pressed` / `<details>`
+- Note di papan catatan punya nama yang terbaca pembaca layar, bukan sekadar "grup"
+- Formulir memberi pesan galat bersuara (`role="alert"` + `aria-invalid`), bukan
+  hanya kolom yang berubah merah
+- Tanpa JavaScript, bagian kontak tetap menampilkan tautan WhatsApp langsung
 - Animasi mati otomatis pada `prefers-reduced-motion`
 - Gambar memakai WebP dan `loading="lazy"`; font 27 KB + 74 KB di-host sendiri
 - Tidak ada permintaan ke server pihak ketiga sama sekali — tidak ada pelacak

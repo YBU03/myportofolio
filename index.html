@@ -9,6 +9,7 @@
 <link rel="canonical" href="https://yubuild.id/">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/img/favicon.svg">
+<link rel="manifest" href="site.webmanifest">
 
 <meta property="og:type" content="website">
 <meta property="og:locale" content="id_ID">
@@ -37,6 +38,9 @@
 </script>
 </head>
 <body>
+
+<!-- Pintasan papan ketik: tombol pertama yang ditemui pengguna Tab -->
+<a class="skip-link" href="#top">Lewati ke konten utama</a>
 
 <!-- Sprite ikon: dipakai ulang lewat <use href="#i-..."> -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -814,7 +818,7 @@
           <span>Judul, deskripsi, dan gambar pratinjau sudah diisi rapi sejak hari pertama.</span>
         </div>
       </li>
-      <li class="note" data-x="94">
+      <li class="note" data-x="95">
         <div class="note-paper">
           <span class="pin-label">Lanjutan</span>
           <b>Tetap bisa dihubungi</b>
@@ -968,7 +972,9 @@
       <form class="form-paper" id="waForm" novalidate>
         <div class="field">
           <label for="f-nama">Nama Anda</label>
-          <input id="f-nama" name="nama" type="text" autocomplete="name" placeholder="Contoh: Budi Santoso" required>
+          <input id="f-nama" name="nama" type="text" autocomplete="name" placeholder="Contoh: Budi Santoso"
+                 required aria-describedby="f-nama-error">
+          <p class="field-error" id="f-nama-error" role="alert" hidden>Mohon isi nama Anda dulu.</p>
         </div>
         <div class="field">
           <label for="f-usaha">Nama &amp; jenis usaha</label>
@@ -992,6 +998,14 @@
           <svg aria-hidden="true"><use href="#i-wa"/></svg> Kirim lewat WhatsApp
         </button>
         <p class="form-hint">Biasanya dibalas di hari yang sama.</p>
+
+        <noscript>
+          <p class="form-hint form-noscript">
+            JavaScript sedang tidak aktif, jadi tombol di atas belum bisa menyusun pesan
+            otomatis. Anda tetap bisa menghubungi saya langsung di
+            <a href="https://wa.me/628577421890" rel="noopener">WhatsApp 0857-7421-890</a>.
+          </p>
+        </noscript>
       </form>
 
       <div class="contact-card">

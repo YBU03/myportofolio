@@ -274,11 +274,21 @@
     var nRect = notesWrap.getBoundingClientRect();
     var offsetY = nRect.top - bRect.top;
 
+    /* Semua note dipetakan ulang ke rentang yang aman (bukan sekadar dipotong
+       di tepi), supaya tidak ada yang terpotong DAN jaraknya tetap merata —
+       kalau hanya di-clamp, note paling pinggir tertarik ke dalam lalu
+       menimpa tetangganya. */
+    var lebarNote = 0;
+    notes.forEach(function (el) { lebarNote = Math.max(lebarNote, el.offsetWidth); });
+    var batas = ((lebarNote / 2) + 10) / nRect.width * 100;
+    var xAsli = notes.map(function (el) { return parseFloat(el.dataset.x || '50'); });
+    var xMin  = Math.min.apply(null, xAsli);
+    var xMax  = Math.max.apply(null, xAsli);
+    var rentang = xMax - xMin;
+    var aman = Math.max(0, 100 - batas * 2);
+
     notes.forEach(function (el, i) {
-      var xPct = parseFloat(el.dataset.x || '50');
-      // Jaga supaya note tidak pernah terpotong di tepi wadahnya
-      var batas = ((el.offsetWidth / 2) + 10) / nRect.width * 100;
-      xPct = clamp(xPct, batas, 100 - batas);
+      var xPct = rentang > 0 ? batas + ((xAsli[i] - xMin) / rentang) * aman : 50;
       el.style.left = xPct + '%';
       var xBoard = (nRect.left - bRect.left) + (xPct / 100) * nRect.width;
       var y = ropeY(xBoard) - offsetY + 4;
@@ -300,6 +310,13 @@
       });
       el.setAttribute('tabindex', '0');
       el.setAttribute('role', 'group');
+      /* Beri nama yang terbaca pembaca layar — tanpa ini note hanya terdengar
+         sebagai "grup" kosong, padahal isinya justru poin serah terima. */
+      var pin   = $('.pin-label', el);
+      var judul = el.querySelector('b');
+      var nama  = [pin && pin.textContent.trim(), judul && judul.textContent.trim()]
+                    .filter(Boolean).join(': ');
+      if (nama) el.setAttribute('aria-label', nama + ' — panah kiri/kanan untuk mengayunkan');
     });
 
     layoutNotes();
@@ -441,6 +458,16 @@
 
   var form = $('#waForm');
   if (form) {
+    var galatNama = $('#f-nama-error');
+
+    /* Pesan galat yang benar-benar terbaca pembaca layar — sebelumnya kolomnya
+       hanya berubah warna merah, yang tidak terdengar sama sekali. */
+    function tandaiGalat(ada) {
+      form.nama.setAttribute('aria-invalid', String(ada));
+      form.nama.classList.toggle('is-invalid', ada);
+      if (galatNama) galatNama.hidden = !ada;
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var nama  = form.nama.value.trim();
@@ -448,7 +475,8 @@
       var butuh = form.butuh.value;
       var pesan = form.pesan.value.trim();
 
-      if (!nama) { form.nama.focus(); form.nama.style.borderColor = '#c0392b'; return; }
+      if (!nama) { tandaiGalat(true); form.nama.focus(); return; }
+      tandaiGalat(false);
 
       var baris = [
         'Halo Yubuild, saya ' + nama + '.',
@@ -458,10 +486,15 @@
         '\nMohon info langkah selanjutnya. Terima kasih.'
       ].filter(Boolean).join('\n');
 
-      window.open('https://wa.me/' + PENGATURAN.waNumber + '?text=' + encodeURIComponent(baris), '_blank', 'noopener');
+      var tautan = 'https://wa.me/' + PENGATURAN.waNumber + '?text=' + encodeURIComponent(baris);
+
+      /* Sebagian peramban ponsel memblokir window.open. Kalau itu terjadi,
+         pindah halaman langsung supaya pesannya tetap sampai ke WhatsApp. */
+      var tab = window.open(tautan, '_blank', 'noopener');
+      if (!tab || tab.closed || typeof tab.closed === 'undefined') window.location.href = tautan;
     });
 
-    form.nama.addEventListener('input', function () { form.nama.style.borderColor = ''; });
+    form.nama.addEventListener('input', function () { tandaiGalat(false); });
   }
 
   /* Jalankan sekali saat halaman dibuka */
