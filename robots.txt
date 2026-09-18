@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /og-build.html
+
+Sitemap: https://yubuild.id/sitemap.xml

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Yubuild">
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="#fcfbf7" stroke="#dce8ff" stroke-width="2"/>
+  <path d="M13 31.5 51 13.5 39 51.5l-8.6-12.8L13 31.5z" fill="#ffffff" stroke="#1b4bc4" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M51 13.5 30.4 38.7 39 51.5 51 13.5z" fill="#dce8ff" stroke="#1b4bc4" stroke-width="3" stroke-linejoin="round"/>
+</svg>
